@@ -15,7 +15,10 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
- 
+
+#ifndef __SlowMotionServo_h__
+#define __SlowMotionServo_h__
+
 #include "Arduino.h"
 #include <Servo.h>
 
@@ -29,12 +32,34 @@ private:
   int currentPulse;
   byte mMinToMaxSpeed;
   byte mMaxToMinSpeed;
+  
+  static SlowMotionServo *sServoList;
+
+  void updatePosition();
+
 public:
-  SlowMotionServo(byte pin) : mPin(pin) {}
+  SlowMotionServo() : mPin(-1) {}
+  void setup() { if (mPin != -1) attach(mPin); }
+  void setup(byte pin) { mPin = pin; setup(); }
+  void setMinMax(int minPulse, int maxPulse);
+  void setMin(int minPulse);
+  void setMax(int maxPulse);
   void setMinToMaxSpeed(byte speed) { mMinToMaxSpeed = speed; }
   void setMaxToMinSpeed(byte speed) { mMaxToMinSpeed = speed; }
   void goTo(int position);
+  void goTo(float position);
   void goToMin() { goTo(mMinPulse); }
   void goToMax() { goTo(mMaxPulse); }
-  void updatePosition();
+  
+  virtual float slope(float time) = 0;
+  
+  static void update();
 };
+
+class SMSLinear : public SlowMotionServo
+{
+public:
+  virtual float slope(float time);
+};
+
+#endif
