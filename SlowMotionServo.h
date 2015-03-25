@@ -1,6 +1,6 @@
 /*
  * Slow Motion Servo Library for Arduino
- * 
+ *
  * Copyright Jean-Luc Béchennec 2015
  *
  * This software is distributed under the GNU Public Licence v2 (GPLv2)
@@ -31,9 +31,11 @@ private:
   unsigned long mStartTime;
   float mInitialRelativeTime;
   float mTargetRelativeTime;
-  byte mMinToMaxSpeed;
-  byte mMaxToMinSpeed;
-  
+  float mCurrentRelativeTime;
+  float mTimeFactorUp;
+  float mTimeFactorDown;
+  SlowMotionServo *mNext;
+
   static SlowMotionServo *sServoList;
 
   void updatePosition();
@@ -44,21 +46,32 @@ public:
   void setMinMax(int minPulse, int maxPulse);
   void setMin(int minPulse);
   void setMax(int maxPulse);
-  void setMinToMaxSpeed(byte speed) { mMinToMaxSpeed = speed; }
-  void setMaxToMinSpeed(byte speed) { mMaxToMinSpeed = speed; }
+  void setMinToMaxSpeed(float speed) { mTimeFactorUp = speed; }
+  void setMaxToMinSpeed(float speed) { mTimeFactorDown = speed; }
   void goTo(float position);
   void goToMin() { goTo(0.0); }
   void goToMax() { goTo(1.0); }
-  
+  bool isStopped();
+
   virtual float slope(float time) = 0;
-  
+
   static void update();
 };
 
 class SMSLinear : public SlowMotionServo
 {
 public:
-  virtual float slope(float time);
+  virtual float slopeUp(float time);
+  virtual float slopeDown(float time);
+  float slope(float time) { return time; }
+};
+
+class SMSSmooth : public SlowMotionServo
+{
+public:
+  virtual float slopeUp(float time);
+  virtual float slopeDown(float time);
+  float slope(float time) { return (1.0 - cos(time * PI))/2.0; }
 };
 
 #endif

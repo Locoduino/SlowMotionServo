@@ -1,6 +1,6 @@
 /*
  * Slow Motion Servo Library for Arduino
- * 
+ *
  * Copyright Jean-Luc Béchennec 2015
  *
  * This software is distributed under the GNU Public Licence v2 (GPLv2)
@@ -18,7 +18,23 @@
 
 #include <SlowMotionServo.h>
 
+enum { SERVO_STOPPED, SERVO_UP, SERVO_DOWN, SERVO_DELAYED };
+
 SlowMotionServo *SlowMotionServo::sServoList = NULL;
+
+SlowMotionServo::SlowMotionServo() :
+  mState(SERVO_STOPPED),
+  mMinPulse(544),
+  mMaxPulse(2400),
+  mInitialRelativeTime(0.0),
+  mTargetRelativeTime(0.0),
+  mCurrentRelativeTime(0.0),
+  mTimeFactorUp(0.0001),
+  mTimeFactorDown(0.0001)
+{
+  mNext = sServoList;
+  sServoList = this;
+}
 
 int SlowMotionServo::constrainPulse(int pulse)
 {
@@ -58,13 +74,81 @@ void SlowMotionServo::goTo(float position)
 {
   if (position > 1.0) position = 1.0;
   else if (position < 0.0) position = 0.0;
-  mTargetRelativeTime = position * 1000;
-  mTimeSpan = mTargetRelativeTime - mInitialRelativeTime;
+  mTargetRelativeTime = position;
+  mInitialRelativeTime = mCurrentRelativeTime;
+  if (mTargetRelativeTime > mInitialRelativeTime) mState = SERVO_UP;
+  else if (mTargetRelativeTime < mInitialRelativeTime) mState = SERVO_DOWN;
+  else mState = SERVO_STOPPED;
   mStartTime = millis();
 }
 
 void SlowMotionServo::updatePosition()
 {
-  float relativeTime = (millis() - mStartTime) + mInitialRelativeTime;
-  int position = time *  
+  float position;
+  float time;
+  unsigned long date = millis();
+
+  switch (mState) {
+    case SERVO_UP:
+      mCurrentRelativeTime = (float)(date - mStartTime) * mTimeFactorUp +
+                             mInitialRelativeTime;
+      if (mCurrentRelativeTime > mTargetRelativeTime) {
+        mCurrentRelativeTime = mTargetRelativeTime;
+        mStartTime = date;
+        mState = SERVO_DELAYED;
+      }
+      position = slope(mCurrentRelativeTime);
+      Serial.println(position * (mMaxPulse - mMinPulse) + mMinPulse);
+      break;
+    case SERVO_DOWN:
+      mCurrentRelativeTime = mInitialRelativeTime -
+                             (float)(date - mStartTime) * mTimeFactorDown;
+      if (mCurrentRelativeTime < mTargetRelativeTime) {
+        mCurrentRelativeTime = mTargetRelativeTime;
+        mStartTime = date;
+        mState = SERVO_DELAYED;
+      }
+      position = slope(mCurrentRelativeTime);
+      Serial.println(position * (mMaxPulse - mMinPulse) + mMinPulse);
+      break;
+    case SERVO_DELAYED:
+      if ((millis() - mStartTime) > 10) {
+        mState = SERVO_STOPPED;
+      }
+      break;
+  }
+}
+
+bool SlowMotionServo::isStopped()
+{
+  return mState == SERVO_STOPPED;
+}
+
+void SlowMotionServo::update()
+{
+  SlowMotionServo *servo = sServoList;
+  while (servo != NULL) {
+    servo->updatePosition();
+    servo = servo->mNext;
+  }
+}
+
+float SMSLinear::slopeUp(float time)
+{
+  return slope(time);
+}
+
+float SMSLinear::slopeDown(float time)
+{
+  return slope(time);
+}
+
+float SMSSmooth::slopeUp(float time)
+{
+  return slope(time);
+}
+
+float SMSSmooth::slopeDown(float time)
+{
+  return slope(time);
 }
