@@ -25,31 +25,30 @@
 class SlowMotionServo : public Servo
 {
 private:
-  byte mPin;
   byte mState;
   int mMinPulse;
   int mMaxPulse;
-  int currentPulse;
+  unsigned long mStartTime;
+  float mInitialRelativeTime;
+  float mTargetRelativeTime;
   byte mMinToMaxSpeed;
   byte mMaxToMinSpeed;
   
   static SlowMotionServo *sServoList;
 
   void updatePosition();
+  int constrainPulse(int pulse);
 
 public:
-  SlowMotionServo() : mPin(-1) {}
-  void setup() { if (mPin != -1) attach(mPin); }
-  void setup(byte pin) { mPin = pin; setup(); }
+  SlowMotionServo();
   void setMinMax(int minPulse, int maxPulse);
   void setMin(int minPulse);
   void setMax(int maxPulse);
   void setMinToMaxSpeed(byte speed) { mMinToMaxSpeed = speed; }
   void setMaxToMinSpeed(byte speed) { mMaxToMinSpeed = speed; }
-  void goTo(int position);
   void goTo(float position);
-  void goToMin() { goTo(mMinPulse); }
-  void goToMax() { goTo(mMaxPulse); }
+  void goToMin() { goTo(0.0); }
+  void goToMax() { goTo(1.0); }
   
   virtual float slope(float time) = 0;
   
