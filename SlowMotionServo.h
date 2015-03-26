@@ -53,7 +53,8 @@ public:
   void goToMax() { goTo(1.0); }
   bool isStopped();
 
-  virtual float slope(float time) = 0;
+  virtual float slopeUp(float time) = 0;
+  virtual float slopeDown(float time) = 0;
 
   static void update();
 };
@@ -72,6 +73,13 @@ public:
   virtual float slopeUp(float time);
   virtual float slopeDown(float time);
   float slope(float time) { return (1.0 - cos(time * PI))/2.0; }
+};
+
+class SMSSmoothBounce : public SlowMotionServo
+{
+public:
+  virtual float slopeUp(float time);
+  virtual float slopeDown(float time);
 };
 
 #endif

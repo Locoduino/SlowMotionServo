@@ -96,7 +96,7 @@ void SlowMotionServo::updatePosition()
         mCurrentRelativeTime = mTargetRelativeTime;
         mState = SERVO_DELAYED;
       }
-      position = slope(mCurrentRelativeTime);
+      position = slopeUp(mCurrentRelativeTime);
       writeMicroseconds(position * (mMaxPulse - mMinPulse) + mMinPulse);
       break;
     case SERVO_DOWN:
@@ -106,7 +106,7 @@ void SlowMotionServo::updatePosition()
         mCurrentRelativeTime = mTargetRelativeTime;
         mState = SERVO_DELAYED;
       }
-      position = slope(mCurrentRelativeTime);
+      position = slopeDown(mCurrentRelativeTime);
       writeMicroseconds(position * (mMaxPulse - mMinPulse) + mMinPulse);
       break;
     case SERVO_DELAYED:
@@ -150,4 +150,20 @@ float SMSSmooth::slopeUp(float time)
 float SMSSmooth::slopeDown(float time)
 {
   return slope(time);
+}
+
+float SMSSmoothBounce::slopeUp(float time)
+{
+  if (time <= 0.79) {
+    return (1.0 - cos(time * PI))/1.8;
+  }
+  else {
+    float timeOff = 10.0 * (time - 0.55);
+    return (0.834 + 1.0 / (timeOff * timeOff));
+  }
+}
+
+float SMSSmoothBounce::slopeDown(float time)
+{
+  return (1.0 - cos(time * PI))/2.265;
 }
