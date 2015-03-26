@@ -9,8 +9,10 @@ void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
   
-  servo.setMin(1000);
-  servo.setMax(2000);
+  servo.setMin(500);
+  servo.setMax(2400);
+  servo.setMinToMaxSpeed(0.0005);
+  servo.attach(7);
   servo.goTo(1.0);
 }
 

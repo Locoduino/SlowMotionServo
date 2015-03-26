@@ -94,26 +94,25 @@ void SlowMotionServo::updatePosition()
                              mInitialRelativeTime;
       if (mCurrentRelativeTime > mTargetRelativeTime) {
         mCurrentRelativeTime = mTargetRelativeTime;
-        mStartTime = date;
         mState = SERVO_DELAYED;
       }
       position = slope(mCurrentRelativeTime);
-      Serial.println(position * (mMaxPulse - mMinPulse) + mMinPulse);
+      writeMicroseconds(position * (mMaxPulse - mMinPulse) + mMinPulse);
       break;
     case SERVO_DOWN:
       mCurrentRelativeTime = mInitialRelativeTime -
                              (float)(date - mStartTime) * mTimeFactorDown;
       if (mCurrentRelativeTime < mTargetRelativeTime) {
         mCurrentRelativeTime = mTargetRelativeTime;
-        mStartTime = date;
         mState = SERVO_DELAYED;
       }
       position = slope(mCurrentRelativeTime);
-      Serial.println(position * (mMaxPulse - mMinPulse) + mMinPulse);
+      writeMicroseconds(position * (mMaxPulse - mMinPulse) + mMinPulse);
       break;
     case SERVO_DELAYED:
       if ((millis() - mStartTime) > 10) {
         mState = SERVO_STOPPED;
+        mStartTime = date;
       }
       break;
   }
