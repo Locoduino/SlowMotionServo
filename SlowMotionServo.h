@@ -25,9 +25,12 @@
 class SlowMotionServo : public Servo
 {
 private:
-  byte mState;                // state of the servo
-  int mMinPulse;              // minimum position of the servo in microseconds
-  int mMaxPulse;              // maximum position of the servo in microseconds
+  byte mPin;                  // connection pin
+  byte mState:3;              // state of the servo
+  bool mDetachAtMin:1;
+  bool mDetachAtMax:1;
+  unsigned int mMinPulse;     // minimum position of the servo in microseconds
+  unsigned int mMaxPulse;     // maximum position of the servo in microseconds
   unsigned long mStartTime;   // time when the movement begin
   float mInitialRelativeTime; // starting position-time of the servo
   float mTargetRelativeTime;  // target position-time of the servo
@@ -37,18 +40,25 @@ private:
   SlowMotionServo *mNext;     // next servo in the list
 
   static SlowMotionServo *sServoList; // head of the servo list
+  static unsigned int sDelayUntilStop;
 
   void updatePosition();      // update the position of the servo
+  void updatePulseAccordingToMinMax();
 
 public:
   SlowMotionServo();
-  void setMinMax(int minPulse, int maxPulse);
-  void setMin(int minPulse);
-  void setMax(int maxPulse);
+  SlowMotionServo(byte pin);
+  void setPin(byte pin) { mPin = pin; }
+  void setMinMax(unsigned int minPulse, unsigned int maxPulse);
+  void setMin(unsigned int minPulse);
+  void setMax(unsigned int maxPulse);
   void setMinToMaxSpeed(float speed) { mTimeFactorUp = speed / 10000.0; }
   void setMaxToMinSpeed(float speed) { mTimeFactorDown = speed / 10000.0; }
   void setSpeed(float speed) { mTimeFactorUp = mTimeFactorDown = speed / 10000.0; }
   void setInitialPosition(float position);
+  void setDetachAtMin(bool detach) { mDetachAtMin = detach; }
+  void setDetachAtMax(bool detach) { mDetachAtMax = detach; }
+  void setDetach(bool detach) { mDetachAtMin = mDetachAtMax = detach; }
   void goTo(float position);
   void goToMin() { goTo(0.0); }
   void goToMax() { goTo(1.0); }
@@ -58,6 +68,7 @@ public:
   virtual float slopeDown(float time) = 0;
 
   static void update();
+  static void setDelayUntilStop(unsigned int delayUntilStop);
 };
 
 class SMSLinear : public SlowMotionServo
