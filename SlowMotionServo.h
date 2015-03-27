@@ -25,21 +25,20 @@
 class SlowMotionServo : public Servo
 {
 private:
-  byte mState;
-  int mMinPulse;
-  int mMaxPulse;
-  unsigned long mStartTime;
-  float mInitialRelativeTime;
-  float mTargetRelativeTime;
-  float mCurrentRelativeTime;
-  float mTimeFactorUp;
-  float mTimeFactorDown;
-  SlowMotionServo *mNext;
+  byte mState;                // state of the servo
+  int mMinPulse;              // minimum position of the servo in microseconds
+  int mMaxPulse;              // maximum position of the servo in microseconds
+  unsigned long mStartTime;   // time when the movement begin
+  float mInitialRelativeTime; // starting position-time of the servo
+  float mTargetRelativeTime;  // target position-time of the servo
+  float mCurrentRelativeTime; // current position-time of the servo
+  float mTimeFactorUp;        // time factor of a millis for movement from min to max
+  float mTimeFactorDown;      // time factor of a millis for movement from max to min
+  SlowMotionServo *mNext;     // next servo in the list
 
-  static SlowMotionServo *sServoList;
+  static SlowMotionServo *sServoList; // head of the servo list
 
-  void updatePosition();
-  int constrainPulse(int pulse);
+  void updatePosition();      // update the position of the servo
 
 public:
   SlowMotionServo();
@@ -49,6 +48,7 @@ public:
   void setMinToMaxSpeed(float speed) { mTimeFactorUp = speed / 10000.0; }
   void setMaxToMinSpeed(float speed) { mTimeFactorDown = speed / 10000.0; }
   void setSpeed(float speed) { mTimeFactorUp = mTimeFactorDown = speed / 10000.0; }
+  void setInitialPosition(float position);
   void goTo(float position);
   void goToMin() { goTo(0.0); }
   void goToMax() { goTo(1.0); }

@@ -36,11 +36,18 @@ SlowMotionServo::SlowMotionServo() :
   sServoList = this;
 }
 
-int SlowMotionServo::constrainPulse(int pulse)
+int constrainPulse(int pulse)
 {
   if (pulse < 544)  pulse = 544;
   else if (pulse > 2400) pulse = 2400;
   return pulse;
+}
+
+float constrainPosition(float position)
+{
+  if (position > 1.0) position = 1.0;
+  else if (position < 0.0) position = 0.0;
+  return position;
 }
 
 void SlowMotionServo::setMinMax(int minPulse, int maxPulse)
@@ -70,10 +77,15 @@ void SlowMotionServo::setMax(int maxPulse)
   mMaxPulse = maxPulse;
 }
 
+void SlowMotionServo::setInitialPosition(float position)
+{
+  position = constrainPosition(position);
+  mTargetRelativeTime = mInitialRelativeTime = mCurrentRelativeTime = position;
+}
+
 void SlowMotionServo::goTo(float position)
 {
-  if (position > 1.0) position = 1.0;
-  else if (position < 0.0) position = 0.0;
+  position = constrainPosition(position);
   mTargetRelativeTime = position;
   mInitialRelativeTime = mCurrentRelativeTime;
   if (mTargetRelativeTime > mInitialRelativeTime) mState = SERVO_UP;

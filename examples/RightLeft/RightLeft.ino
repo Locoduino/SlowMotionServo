@@ -12,8 +12,8 @@ void setup() {
   for (byte num = 0; num < 8; num++) {
     servo[num].setMin(600);
     servo[num].setMax(2200);
-    servo[num].setMinToMaxSpeed(3.0);
-    servo[num].setMaxToMinSpeed(3.0);
+    servo[num].setMinToMaxSpeed(0.3);
+    servo[num].setMaxToMinSpeed(0.3);
     servo[num].attach(num+2);
     servo[num].goTo(1.0);
     nextPos[num] = 0.0;
