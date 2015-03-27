@@ -46,8 +46,9 @@ public:
   void setMinMax(int minPulse, int maxPulse);
   void setMin(int minPulse);
   void setMax(int maxPulse);
-  void setMinToMaxSpeed(float speed) { mTimeFactorUp = speed; }
-  void setMaxToMinSpeed(float speed) { mTimeFactorDown = speed; }
+  void setMinToMaxSpeed(float speed) { mTimeFactorUp = speed / 10000.0; }
+  void setMaxToMinSpeed(float speed) { mTimeFactorDown = speed / 10000.0; }
+  void setSpeed(float speed) { mTimeFactorUp = mTimeFactorDown = speed; }
   void goTo(float position);
   void goToMin() { goTo(0.0); }
   void goToMax() { goTo(1.0); }
