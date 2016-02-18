@@ -176,7 +176,7 @@ float target = 0.0;
 ```
 
 Third, initialize it in setup(). Be careful actual minimum and maximum 
-positions of a servo maybe greater and or lower than positions allowed by
+positions of a servo may be greater and/or lower than positions allowed by
 the Servo and SlowMotionServo libraries:
 
 ```
