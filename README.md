@@ -28,10 +28,10 @@ the class SlowMotionServo:
 As usual, you have to include it at the beginning of your sketch but you also
 have to include the Servo library: 
 
-'''
+```
 #include <Servo.h>
 #include <SlowMotionServo.h>
-'''
+```
 
 Then you have to instantiate as many object as servos you want to drive. For
 that you choose what kind of trajectory you want:
@@ -40,9 +40,9 @@ SMSLinear is the class with a linear trajectory. SMSSmooth is the class with a
 sinusoidal trajectory and SMSSmoothBounce is the class with a sinusoidal
 trajectory with a bounce.
 
-'''
+```
 SMSLinear myServo; /* Servo with linear trajectory */
-'''
+```
 
 The following functions are available:
 
@@ -163,36 +163,36 @@ Let's drive a single servo with a smooth movement forward and backward.
 
 First, include the libraries:
 
-'''
+```
 #include <Servo.h>
 #include <SlowMotionServo.h>
-'''
+```
 
 Second, instantiate an object and a float to hold the target position:
 
-'''
+```
 SMSSmooth myServo; /* Servo with linear trajectory */
 float target = 0.0;
-'''
+```
 
 Third, initialize it in setup(). Be careful actual minimum and maximum 
 positions of a servo maybe greater and or lower than positions allowed by
 the Servo and SlowMotionServo libraries:
 
-'''
+```
 void setup()
 {
   myServo.setInitialPosition(target);
   myServo.setMinMax(700, 2000);
   myServo.setPin(3); /* the servo is connected to pin 3 */
 }
-'''
+```
 
 Fourth, if the servo is stopped compute the new target position by doing
 the subtraction 1.0 - target so that if target is 0.0, the new target is
 1.0 and if target is 1.0 the new target is 0.0. And of course call update.
 
-'''
+```
 void loop()
 {
   if (myServo.isStopped()) {
@@ -202,11 +202,11 @@ void loop()
   
   SlowMotionServo::update();
 }
-'''
+```
 
 The full sketch:
 
-'''
+```
 #include <Servo.h>
 #include <SlowMotionServo.h>
 
@@ -227,7 +227,7 @@ void loop() {
   
   SlowMotionServo::update();
 }
-'''
+```
 
 ## How to define your own trajectory.
 
@@ -235,7 +235,7 @@ To do that, you have to inherit from the SlowMotionServo class and redefine
 the slopeUp and slopeDown member functions. Let's take the
 SMSSmooth class as example:
 
-'''
+```
 class SMSSmooth : public SlowMotionServo
 {
 public:
@@ -243,13 +243,13 @@ public:
   virtual float slopeDown(float time);
   float slope(float time) { return (1.0 - cos(time * PI))/2.0; }
 };
-'''
+```
 
 Because trajectories are the same from min to max and max to min, we define
 a new member function, slope, that defines the trajectory. This function is
 called by slopeUp and slopeDown:
 
-'''
+```
 float SMSSmooth::slopeUp(float time)
 {
   return slope(time);
@@ -259,4 +259,4 @@ float SMSSmooth::slopeDown(float time)
 {
   return slope(time);
 }
-'''
+```
