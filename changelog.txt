@@ -1,0 +1,9 @@
++---------------------------------------------------------------------------+
+| SlowMotionServo changelog                                                 |
++---------------------------------------------------------------------------+
+1.0.2   Default min and max have been changed to 1000 and 2000.
+        More accurate SMSSmoothBounce trajectory.
+				Fixed a problem with the initial position.
+        Added PushButton example.
+1.0.1   Fix a typo in the library.properties
+1.0     Initial release.

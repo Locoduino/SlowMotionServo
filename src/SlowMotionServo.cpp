@@ -19,7 +19,14 @@
 #include <SlowMotionServo.h>
 
 static const byte NOPIN = 255;
-enum { SERVO_STOPPED, SERVO_UP, SERVO_DOWN, SERVO_DELAYED_UP, SERVO_DELAYED_DOWN };
+enum {
+	SERVO_INIT, 
+	SERVO_STOPPED, 
+	SERVO_UP, 
+	SERVO_DOWN, 
+	SERVO_DELAYED_UP, 
+	SERVO_DELAYED_DOWN
+};
 
 /*
  * Static member to store a list of servos. This allow to update the
@@ -46,10 +53,10 @@ unsigned int SlowMotionServo::sDelayUntilStop = 10;
  */
 SlowMotionServo::SlowMotionServo() :
   mPin(NOPIN),
-  mState(SERVO_STOPPED),
+  mState(SERVO_INIT),
   mDetachAtMin(false),
   mDetachAtMax(false),
-  mMinPulse(544),
+  mMinPulse(1000),
   mMaxPulse(2400),
   mInitialRelativeTime(0.0),
   mTargetRelativeTime(0.0),
@@ -187,6 +194,11 @@ void SlowMotionServo::updatePosition()
   unsigned long date = millis();
 
   switch (mState) {
+    case SERVO_INIT:
+    	position = slopeUp(mCurrentRelativeTime);
+      writeMicroseconds(position * (mMaxPulse - mMinPulse) + mMinPulse);
+      mState = SERVO_STOPPED;
+      break;
     case SERVO_UP:
       mCurrentRelativeTime = (float)(date - mStartTime) * mTimeFactorUp +
                              mInitialRelativeTime;
@@ -275,12 +287,12 @@ float SMSSmooth::slopeDown(float time)
 
 float SMSSmoothBounce::slopeUp(float time)
 {
-  if (time <= 0.79) {
+  if (time <= 0.795) {
     return (1.0 - cos(time * PI))/1.8;
   }
   else {
     float timeOff = 10.0 * (time - 0.55);
-    return (0.834 + 1.0 / (timeOff * timeOff));
+    return (0.83 + 1.0 / (timeOff * timeOff));
   }
 }
 
