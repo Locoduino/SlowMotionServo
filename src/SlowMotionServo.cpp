@@ -57,7 +57,7 @@ SlowMotionServo::SlowMotionServo() :
   mDetachAtMin(false),
   mDetachAtMax(false),
   mMinPulse(1000),
-  mMaxPulse(2400),
+  mMaxPulse(2000),
   mInitialRelativeTime(0.0),
   mTargetRelativeTime(0.0),
   mCurrentRelativeTime(0.0),
