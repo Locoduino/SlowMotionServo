@@ -7,11 +7,13 @@
 #include <SlowMotionServo.h>
 #include <Bounce2.h>
 
-SMSSmoothBounce myServo;
+SMSSmoothBounce myServoRight;
+SMSSmoothBounce myServoLeft;
 Bounce myButton;
 
-const byte servoPin = 3;
-const byte buttonPin = 4;
+const byte servoRightPin = 4;
+const byte servoLeftPin = 3;
+const byte buttonPin = 5;
 const byte ledPin = 13;
 
 void setup()
@@ -24,12 +26,20 @@ void setup()
   /* scan interval for debounce */
   myButton.interval(5);
 
-  myServo.setMin(800);
-  myServo.setMax(2200);
-  myServo.setSpeed(1.5);
-  myServo.setReverted(true);
-  myServo.setInitialPosition(0.0);
-  myServo.setPin(servoPin);
+  myServoRight.setMin(750);
+  myServoRight.setMax(1800);
+  myServoLeft.setMin(1100);
+  myServoLeft.setMax(2200);
+  
+  myServoRight.setSpeed(1.5);
+  myServoLeft.setSpeed(1.5);
+
+  myServoLeft.setReverted(true);
+  
+  myServoRight.setInitialPosition(0.0);
+  myServoLeft.setInitialPosition(0.0);
+  myServoRight.setPin(servoRightPin);
+  myServoLeft.setPin(servoLeftPin);
   digitalWrite(ledPin, HIGH);
 }
 
@@ -42,14 +52,15 @@ void loop()
   /* update the position of the servo */
   SlowMotionServo::update();
   
-  if (myServo.isStopped()) {
+  if (myServoRight.isStopped() && myServoLeft.isStopped()) {
     digitalWrite(ledPin, LOW);
     if (myButton.fell()) {
       /* look at the button only when the servo is stopped */
       /* change the target */
       servoTarget = 1.0 - servoTarget;
       /* set the new target for the servo */
-      myServo.goTo(servoTarget);
+      myServoRight.goTo(servoTarget);
+      myServoLeft.goTo(servoTarget);
       digitalWrite(ledPin, HIGH);
     }
   }

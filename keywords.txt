@@ -18,6 +18,7 @@ SlowMotionServo 	KEYWORD1
 setMin					KEYWORD2
 setMax					KEYWORD2
 setMinMax				KEYWORD2
+setReverted     KEYWORD2
 setPin					KEYWORD2
 setMinToMaxSpeed			KEYWORD2
 setMaxToMinSpeed			KEYWORD2
@@ -36,4 +37,3 @@ update					KEYWORD2
 ################################################
 # Constants (LITERAL1)
 ################################################
-

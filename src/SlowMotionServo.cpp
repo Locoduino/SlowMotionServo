@@ -56,6 +56,7 @@ SlowMotionServo::SlowMotionServo() :
   mState(SERVO_INIT),
   mDetachAtMin(false),
   mDetachAtMax(false),
+  mReverted(false),
   mMinPulse(1000),
   mMaxPulse(2000),
   mInitialRelativeTime(0.0),
@@ -108,6 +109,14 @@ void SlowMotionServo::updatePulseAccordingToMinMax()
   if (currentPosition < mMinPulse) currentPosition = mMinPulse;
   else if (currentPosition > mMaxPulse) currentPosition = mMaxPulse;
   writeMicroseconds(currentPosition);
+}
+
+/*
+ * Revert the pulse (mirror at time = .5)
+ */
+unsigned int SlowMotionServo::normalizePos(const unsigned int inPos)
+{
+  return mReverted ? map(inPos, mMinPulse, mMaxPulse, mMaxPulse, mMinPulse) : inPos;
 }
 
 /*
@@ -196,7 +205,7 @@ void SlowMotionServo::updatePosition()
   switch (mState) {
     case SERVO_INIT:
     	position = slopeUp(mCurrentRelativeTime);
-      writeMicroseconds(position * (mMaxPulse - mMinPulse) + mMinPulse);
+      writeMicroseconds(normalizePos(position * (mMaxPulse - mMinPulse) + mMinPulse));
       mState = SERVO_STOPPED;
       break;
     case SERVO_UP:
@@ -207,7 +216,7 @@ void SlowMotionServo::updatePosition()
         mState = SERVO_DELAYED_UP;
       }
       position = slopeUp(mCurrentRelativeTime);
-      writeMicroseconds(position * (mMaxPulse - mMinPulse) + mMinPulse);
+      writeMicroseconds(normalizePos(position * (mMaxPulse - mMinPulse) + mMinPulse));
       break;
     case SERVO_DOWN:
       mCurrentRelativeTime = mInitialRelativeTime -
@@ -217,7 +226,7 @@ void SlowMotionServo::updatePosition()
         mState = SERVO_DELAYED_DOWN;
       }
       position = slopeDown(mCurrentRelativeTime);
-      writeMicroseconds(position * (mMaxPulse - mMinPulse) + mMinPulse);
+      writeMicroseconds(normalizePos(position * (mMaxPulse - mMinPulse) + mMinPulse));
       break;
     case SERVO_DELAYED_UP:
       if ((millis() - mStartTime) > sDelayUntilStop) {

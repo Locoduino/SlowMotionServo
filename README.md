@@ -101,6 +101,10 @@ Set the initial position of the servo. The position is a floating point number
 ranging from 0.0 to 1.0. If the value is greater than 1.0, ti is reset to 1.0
 and if lower than 0.0, it is reset to 0.0
 
+### setReverted(reverted)
+
+Reverse the movement. By default reverted is false. If set to true, the trajectories are mirrored across an axis at time = 0.5.
+
 ### goTo(position)
 
 Go to the specified position by following the trajectory.

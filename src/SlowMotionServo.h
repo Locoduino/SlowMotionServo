@@ -29,6 +29,7 @@ private:
   byte mState:3;              // state of the servo
   bool mDetachAtMin:1;
   bool mDetachAtMax:1;
+  bool mReverted:1;
   unsigned int mMinPulse;     // minimum position of the servo in microseconds
   unsigned int mMaxPulse;     // maximum position of the servo in microseconds
   unsigned long mStartTime;   // time when the movement begin
@@ -44,17 +45,19 @@ private:
 
   void updatePosition();      // update the position of the servo
   void updatePulseAccordingToMinMax();
-
+  unsigned int normalizePos(const unsigned int inPos);
+  
 public:
   SlowMotionServo();
   SlowMotionServo(byte pin);
-  void setPin(byte pin) { mPin = pin; }
+  void setPin(const byte pin) { mPin = pin; }
   void setMinMax(unsigned int minPulse, unsigned int maxPulse);
   void setMin(unsigned int minPulse);
   void setMax(unsigned int maxPulse);
-  void setMinToMaxSpeed(float speed) { mTimeFactorUp = speed / 10000.0; }
-  void setMaxToMinSpeed(float speed) { mTimeFactorDown = speed / 10000.0; }
-  void setSpeed(float speed) { mTimeFactorUp = mTimeFactorDown = speed / 10000.0; }
+  void setReverted(const bool inReverted) { mReverted = inReverted; }
+  void setMinToMaxSpeed(const float speed) { mTimeFactorUp = speed / 10000.0; }
+  void setMaxToMinSpeed(const float speed) { mTimeFactorDown = speed / 10000.0; }
+  void setSpeed(const float speed) { mTimeFactorUp = mTimeFactorDown = speed / 10000.0; }
   void setInitialPosition(float position);
   void setDetachAtMin(bool detach) { mDetachAtMin = detach; }
   void setDetachAtMax(bool detach) { mDetachAtMax = detach; }
