@@ -270,7 +270,7 @@ float SlowMotionServo::minToMaxSpeed()
 	return 10000.0 * mTimeFactorUp;
 }
 
-float SlowMotionServo::maxToMinPulse()
+float SlowMotionServo::maxToMinSpeed()
 {
 	return 10000.0 * mTimeFactorDown;
 }

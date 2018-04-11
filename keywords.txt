@@ -39,7 +39,7 @@ detachAtMax					KEYWORD2
 minimumPulse				KEYWORD2
 maximumPulse				KEYWORD2
 minToMaxSpeed				KEYWORD2
-maxToMinPulse				KEYWORD2
+maxToMinSpeed				KEYWORD2
 isReverted					KEYWORD2
 
 ################################################

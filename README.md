@@ -171,7 +171,7 @@ Returns an ```uint16_t``` which is the pulse width in microseconds corresponding
 
 Returns a float which is the speed of the servo when traveling from minimum to maximum position.
 
-### maxToMinPulse()
+### maxToMinSpeed()
 
 Returns a float which is the speed of the servo when traveling from maximum to minimum position.
 

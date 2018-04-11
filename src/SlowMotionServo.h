@@ -73,7 +73,7 @@ public:
   unsigned int minimumPulse() { return mMinPulse; }
   unsigned int maximumPulse() { return mMaxPulse; }
   float minToMaxSpeed();
-  float maxToMinPulse();
+  float maxToMinSpeed();
   bool isReverted()           { return mReverted; }
 
   virtual float slopeUp(float time) = 0;
