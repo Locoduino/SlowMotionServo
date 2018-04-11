@@ -229,14 +229,14 @@ void SlowMotionServo::updatePosition()
       writeMicroseconds(normalizePos(position * (mMaxPulse - mMinPulse) + mMinPulse));
       break;
     case SERVO_DELAYED_UP:
-      if (date - mStartTime) > sDelayUntilStop) {
+      if ((date - mStartTime) > sDelayUntilStop) {
         mState = SERVO_STOPPED;
         if (mDetachAtMax) detach();
         mStartTime = date;
       }
       break;
     case SERVO_DELAYED_DOWN:
-      if (date - mStartTime) > sDelayUntilStop) {
+      if ((date - mStartTime) > sDelayUntilStop) {
         mState = SERVO_STOPPED;
         if (mDetachAtMin) detach();
         mStartTime = date;
