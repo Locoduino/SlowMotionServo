@@ -46,7 +46,7 @@ private:
   void updatePosition();      // update the position of the servo
   void updatePulseAccordingToMinMax();
   unsigned int normalizePos(const unsigned int inPos);
-  
+
 public:
   SlowMotionServo();
   SlowMotionServo(byte pin);
@@ -66,6 +66,15 @@ public:
   void goToMin() { goTo(0.0); }
   void goToMax() { goTo(1.0); }
   bool isStopped();
+
+  byte pin()                  { return mPin; }
+  bool detachAtMin()          { return mDetachAtMin; }
+  bool detachAtMax()          { return mDetachAtMax; }
+  unsigned int minimumPulse() { return mMinPulse; }
+  unsigned int maximumPulse() { return mMaxPulse; }
+  float minToMaxSpeed();
+  float maxToMinPulse();
+  bool isReverted()           { return mReverted; }
 
   virtual float slopeUp(float time) = 0;
   virtual float slopeDown(float time) = 0;

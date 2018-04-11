@@ -6,33 +6,41 @@
 # Datatypes (KEYWORD1)
 ################################################
 
-SMSLinear		KEYWORD1
-SMSSmooth		KEYWORD1
-SMSSmoothBounce 	KEYWORD1
-SlowMotionServo 	KEYWORD1
+SMSLinear						KEYWORD1
+SMSSmooth						KEYWORD1
+SMSSmoothBounce 		KEYWORD1
+SlowMotionServo 		KEYWORD1
 
 ################################################
 # Methods and Functions (KEYWORD2)
 ################################################
 
-setMin					KEYWORD2
-setMax					KEYWORD2
-setMinMax				KEYWORD2
-setReverted     KEYWORD2
-setPin					KEYWORD2
-setMinToMaxSpeed			KEYWORD2
-setMaxToMinSpeed			KEYWORD2
-setSpeed				KEYWORD2
-setInitialPosition			KEYWORD2
-goTo					KEYWORD2
-goToMin					KEYWORD2
-goToMax					KEYWORD2
-setDetachAtMin				KEYWORD2
-setDetachAtMax				KEYWORD2
-setDetach				KEYWORD2
-isStopped				KEYWORD2
-setDelayUntilStop			KEYWORD2
-update					KEYWORD2
+setMin							KEYWORD2
+setMax							KEYWORD2
+setMinMax						KEYWORD2
+setReverted     		KEYWORD2
+setPin							KEYWORD2
+setMinToMaxSpeed		KEYWORD2
+setMaxToMinSpeed		KEYWORD2
+setSpeed						KEYWORD2
+setInitialPosition	KEYWORD2
+goTo								KEYWORD2
+goToMin							KEYWORD2
+goToMax							KEYWORD2
+setDetachAtMin			KEYWORD2
+setDetachAtMax			KEYWORD2
+setDetach						KEYWORD2
+isStopped						KEYWORD2
+setDelayUntilStop		KEYWORD2
+update							KEYWORD2
+pin									KEYWORD2
+detachAtMin					KEYWORD2
+detachAtMax					KEYWORD2
+minimumPulse				KEYWORD2
+maximumPulse				KEYWORD2
+minToMaxSpeed				KEYWORD2
+maxToMinPulse				KEYWORD2
+isReverted					KEYWORD2
 
 ################################################
 # Constants (LITERAL1)

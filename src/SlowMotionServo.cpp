@@ -19,12 +19,13 @@
 #include <SlowMotionServo.h>
 
 static const byte NOPIN = 255;
+
 enum {
-	SERVO_INIT, 
-	SERVO_STOPPED, 
-	SERVO_UP, 
-	SERVO_DOWN, 
-	SERVO_DELAYED_UP, 
+	SERVO_INIT,
+	SERVO_STOPPED,
+	SERVO_UP,
+	SERVO_DOWN,
+	SERVO_DELAYED_UP,
 	SERVO_DELAYED_DOWN
 };
 
@@ -263,6 +264,16 @@ void SlowMotionServo::update()
     servo->updatePosition();
     servo = servo->mNext;
   }
+}
+
+float SlowMotionServo::minToMaxSpeed()
+{
+	return 10000.0 * mTimeFactorUp;
+}
+
+float SlowMotionServo::maxToMinPulse()
+{
+	return 10000.0 * mTimeFactorDown;
 }
 
 /*

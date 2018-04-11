@@ -26,7 +26,7 @@ the class SlowMotionServo:
 ## Using the library
 
 As usual, you have to include it at the beginning of your sketch but you also
-have to include the Servo library: 
+have to include the Servo library:
 
 ```
 #include <Servo.h>
@@ -48,7 +48,7 @@ The following functions are available:
 
 ### setMin(min)
 
-Sets the minimum angle of the servo. The angle is expressed in its equivalency
+Set the minimum angle of the servo. The angle is expressed in its equivalency
 in microseconds. The value can range from 544 to 2400. A value lower than 544
 will be reset to 544 and a value greater than 2400 will be reset to 2400.
 If the value is greater than the maximum angle it is reset to the maximum
@@ -56,7 +56,7 @@ angle.
 
 ### setMax(max)
 
-Sets the maximum angle of the servo. The angle is expressed in its equivalency
+Set the maximum angle of the servo. The angle is expressed in its equivalency
 in microseconds. The value can range from 544 to 2400. A value lower than 544
 will be reset to 544 and a value greater than 2400 will be reset to 2400.
 If the value is lower than the minimum angle it is reset to the minimum
@@ -64,7 +64,7 @@ angle.
 
 ### setMinMax(min, max)
 
-Sets the minimum and maximum angles of the servo. The angle is expressed in
+Set the minimum and maximum angles of the servo. The angle is expressed in
 its equivalency in microseconds. The value can range from 544 to 2400.
 A value lower than 544 will be reset to 544 and a value greater than 2400
 will be reset to 2400.
@@ -80,20 +80,20 @@ Set the pin to which the servo is attached.
 
 Set the speed of the servo when travelling from the minimum to the maximum
 angle. speed is a floating point number. A speed of 1.0 corresponds to a
-10s travelling. 
+10s travelling.
 
 ### setMaxToMinSpeed(speed)
 
 Set the speed of the servo when travelling from the maximum to the minimum
 angle. speed is a floating point number. A speed of 1.0 corresponds to a
-10s travelling. 
+10s travelling.
 
 ### setSpeed(speed)
 
 Set the speed of the servo when travelling from the minimum to the maximum
 angle and from the maximum to the minimum angle.
 speed is a floating point number. A speed of 1.0 corresponds to a
-10s travelling. 
+10s travelling.
 
 ### setInitialPosition(position)
 
@@ -110,7 +110,7 @@ Reverse the movement. By default reverted is false. If set to true, the trajecto
 Go to the specified position by following the trajectory.
 The position is a floating point number
 ranging from 0.0 to 1.0. If the value is greater than 1.0, ti is reset to 1.0
-and if lower than 0.0, it is reset to 0.0 
+and if lower than 0.0, it is reset to 0.0
 
 ### goToMin()
 
@@ -136,7 +136,7 @@ driven.
 
 ### setDetach(detach)
 
-detach is a boolean. If true, the servo is detached when the minimum or the 
+detach is a boolean. If true, the servo is detached when the minimum or the
 maximum positions
 are reached. The servo is no longer driven. This is useful when the servo has
 to push against an elastic restoring force. If false the servo continues to be
@@ -144,7 +144,40 @@ driven.
 
 ### isStopped()
 
-return true if the servo is stopped.
+Returns true if the servo is stopped.
+
+### pin()
+
+Returns a ```byte``` which is the number of the pin. 255 is returned if the object
+has not been connected to any pin.
+
+### detachAtMin()
+
+Returns true if the servo is detached when reaching the minimum position.
+
+### detachAtMax()
+
+Returns true if the servo is detached when reaching the maximum position.
+
+### minimumPulse()
+
+Returns an ```uint16_t``` which is the pulse width in microseconds corresponding to the minimum servo position.
+
+### maximumPulse()
+
+Returns an ```uint16_t``` which is the pulse width in microseconds corresponding to the maximum servo position.
+
+### minToMaxSpeed()
+
+Returns a float which is the speed of the servo when traveling from minimum to maximum position.
+
+### maxToMinPulse()
+
+Returns a float which is the speed of the servo when traveling from maximum to minimum position.
+
+### isReverted()
+
+Returns true if the movement is reverted.
 
 ### SlowMotionServo::setDelayUntilStop(delay)
 
@@ -179,7 +212,7 @@ SMSSmooth myServo; /* Servo with linear trajectory */
 float target = 0.0;
 ```
 
-Third, initialize it in setup(). Be careful actual minimum and maximum 
+Third, initialize it in setup(). Be careful actual minimum and maximum
 positions of a servo may be greater and/or lower than positions allowed by
 the Servo and SlowMotionServo libraries:
 
@@ -203,7 +236,7 @@ void loop()
     target = 1.0 - target;
     myServo.goTo(target);
   }
-  
+
   SlowMotionServo::update();
 }
 ```
@@ -228,7 +261,7 @@ void loop() {
     target = 1.0 - target;
     myServo.goTo(target);
   }
-  
+
   SlowMotionServo::update();
 }
 ```
