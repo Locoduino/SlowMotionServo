@@ -200,7 +200,6 @@ void SlowMotionServo::goTo(float position)
 void SlowMotionServo::updatePosition()
 {
   float position;
-  float time;
   unsigned long date = millis();
 
   switch (mState) {
@@ -230,14 +229,14 @@ void SlowMotionServo::updatePosition()
       writeMicroseconds(normalizePos(position * (mMaxPulse - mMinPulse) + mMinPulse));
       break;
     case SERVO_DELAYED_UP:
-      if ((millis() - mStartTime) > sDelayUntilStop) {
+      if (date - mStartTime) > sDelayUntilStop) {
         mState = SERVO_STOPPED;
         if (mDetachAtMax) detach();
         mStartTime = date;
       }
       break;
     case SERVO_DELAYED_DOWN:
-      if ((millis() - mStartTime) > sDelayUntilStop) {
+      if (date - mStartTime) > sDelayUntilStop) {
         mState = SERVO_STOPPED;
         if (mDetachAtMin) detach();
         mStartTime = date;
