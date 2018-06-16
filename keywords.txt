@@ -41,6 +41,11 @@ maximumPulse				KEYWORD2
 minToMaxSpeed				KEYWORD2
 maxToMinSpeed				KEYWORD2
 isReverted					KEYWORD2
+setupMin						KEYWORD2
+setupMax						KEYWORD2
+adjustMin						KEYWORD2
+adjustMax						KEYWORD2
+endSetup						KEYWORD2
 
 ################################################
 # Constants (LITERAL1)
