@@ -194,6 +194,32 @@ used only for servos and positions for which setDetach(true) is specified.
 Update the positions of all the servos. This class function has to be called
 in loop() as frequently as possible.
 
+## Live adjustement of minimum and maximum position
+
+With version 1.1, 5 functions have been added to implement live adjustement of minimum and maximum positions. When an adjustement of a servo is in progress, the goTo, goToMin and goToMax functions fail silently.
+
+Entering in live adjustement process is done implicitely by calling one of the for adjust functions. Exiting the live adjustement process is done by calling de ```endAdjust()``` function.
+
+### setupMin(minPulse)
+
+```setupMin()``` sets the minimum pulse value. ```minPulse``` is an unsigned 16 bits integer. The servo enters in the live adjustement process: its state is saved, the minimum pulse is set to ```minPulse``` and it goes to the new minimum position so that the user can see it. If ```minPulse``` is greater than the maximum pulse, it is set back to the maximum pulse. If ```minPulse``` is lower than the minimum possible value of the Servo library (544), it is set back to the minimum possible value.
+
+### setupMax(maxPulse)
+
+```setupMax()``` sets the maximum pulse value. ```maxPulse``` is an unsigned 16 bits integer. The servo enters in the live adjustement process: its state is saved, the maximum pulse is set to ```maxPulse``` and it goes to the new maximum position so that the user can see it. If ```maxPulse``` is lower than the minimum pulse, it is set back to the minimum pulse. If ```maxPulse``` is greater than the maximum possible value of the Servo library (2400), it is set back to the maximum possible value.
+
+### adjustMin(increment)
+
+```adjustMin()``` adds ```increment``` to the minimum position. ```increment``` is a signed 16 bits integer. The servo enters in the live adjustement process: its state is saved, ```increment``` is added to the minimum pulse and it goes to the new minimum position so that the user can see it. If after adding ```increment```, the minimum pulse is greater than the maximum pulse, it is set back to the maximum pulse. If after adding ```increment```, the minimum pulse is lower than the minimum possible value of the Servo library (544), it is set back to the minimum possible value.
+
+### adjustMax(increment)
+
+```adjustMax()``` adds ```increment``` to the maximum position. ```increment``` is a signed 16 bits integer. The servo enters in the live adjustement process: its state is saved, ```increment``` is added to the maximum pulse and it goes to the new maximum position so that the user can see it. If after adding ```increment```, the maximum pulse is lower than the minimum pulse, it is set back to the minimum pulse.  If after adding ```increment```, the maximum pulse is greater than the maximum possible value of the Servo library (2400), it is set back to the maximum possible value.
+
+### endAdjust()
+
+After calling the 4 previous function, ```endAdjust()``` shall be called to exit the adjustement process. The state of the servo is restored. However it does not returns to the position it was before the adjustement process.
+
 ## Example
 
 Let's drive a single servo with a smooth movement forward and backward.
