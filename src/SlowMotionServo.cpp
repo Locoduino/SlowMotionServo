@@ -18,15 +18,17 @@
 
 #include <SlowMotionServo.h>
 
-static const byte NOPIN = 255;
+static const byte NOPIN = 63;
 
 enum {
-	SERVO_INIT,
-	SERVO_STOPPED,
-	SERVO_UP,
-	SERVO_DOWN,
-	SERVO_DELAYED_UP,
-	SERVO_DELAYED_DOWN
+	SERVO_INIT         = 0,
+	SERVO_STOPPED      = 1,
+	SERVO_SETUP        = 2,
+	SERVO_UP           = 3,
+	SERVO_DOWN         = 4,
+	SERVO_DELAYED_UP   = 5,
+	SERVO_DELAYED_DOWN = 6,
+	SERVO_NO_STATE     = 7
 };
 
 /*
@@ -54,9 +56,10 @@ unsigned int SlowMotionServo::sDelayUntilStop = 10;
  */
 SlowMotionServo::SlowMotionServo() :
   mPin(NOPIN),
-  mState(SERVO_INIT),
-  mDetachAtMin(false),
+	mDetachAtMin(false),
   mDetachAtMax(false),
+	mState(SERVO_INIT),
+	mSavedState(SERVO_NO_STATE),
   mReverted(false),
   mMinPulse(1000),
   mMaxPulse(2000),
@@ -126,16 +129,18 @@ unsigned int SlowMotionServo::normalizePos(const unsigned int inPos)
  */
 void SlowMotionServo::setMinMax(unsigned int minPulse, unsigned int maxPulse)
 {
-  minPulse = constrainPulse(minPulse);
-  maxPulse = constrainPulse(maxPulse);
-  if (minPulse <= maxPulse) {
-    mMinPulse = minPulse;
-    mMaxPulse = maxPulse;
-  }
-  else {
-    mMinPulse = mMaxPulse = (minPulse + maxPulse) / 2;
-  }
-  updatePulseAccordingToMinMax();
+	if (isSettable()) {
+		minPulse = constrainPulse(minPulse);
+		maxPulse = constrainPulse(maxPulse);
+		if (minPulse <= maxPulse) {
+		  mMinPulse = minPulse;
+		  mMaxPulse = maxPulse;
+		}
+		else {
+		  mMinPulse = mMaxPulse = (minPulse + maxPulse) / 2;
+		}
+		updatePulseAccordingToMinMax();
+	}
 }
 
 /*
@@ -144,10 +149,12 @@ void SlowMotionServo::setMinMax(unsigned int minPulse, unsigned int maxPulse)
  */
 void SlowMotionServo::setMin(unsigned int minPulse)
 {
-  minPulse = constrainPulse(minPulse);
-  if (minPulse > mMaxPulse) minPulse = mMaxPulse;
-  mMinPulse = minPulse;
-  updatePulseAccordingToMinMax();
+	if (isSettable()) {
+	  minPulse = constrainPulse(minPulse);
+	  if (minPulse > mMaxPulse) minPulse = mMaxPulse;
+	  mMinPulse = minPulse;
+	  updatePulseAccordingToMinMax();
+	}
 }
 
 /*
@@ -156,10 +163,53 @@ void SlowMotionServo::setMin(unsigned int minPulse)
  */
 void SlowMotionServo::setMax(unsigned int maxPulse)
 {
-  maxPulse = constrainPulse(maxPulse);
-  if (maxPulse < mMinPulse) maxPulse = mMinPulse;
-  mMaxPulse = maxPulse;
-  updatePulseAccordingToMinMax();
+	if (isSettable()) {
+	  maxPulse = constrainPulse(maxPulse);
+	  if (maxPulse < mMinPulse) maxPulse = mMinPulse;
+	  mMaxPulse = maxPulse;
+	  updatePulseAccordingToMinMax();
+	}
+}
+
+/*
+ * if inReverted is true, the movement is reverted. Otherwise it is not
+ */
+void SlowMotionServo::setReverted(const bool inReverted)
+{
+	if (isSettable()) {
+		mReverted = inReverted;
+	}
+}
+
+/*
+ * Set the speed when travelling from minimum position to maximum positions
+ */
+void SlowMotionServo::setMinToMaxSpeed(const float speed)
+{
+	if (isSettable()) {
+		mTimeFactorUp = speed / 10000.0;
+	}
+}
+
+/*
+ * Set the speed when travelling from maximum position to minimum positions
+ */
+void SlowMotionServo::setMaxToMinSpeed(const float speed)
+{
+	if (isSettable()) {
+		mTimeFactorDown = speed / 10000.0;
+	}
+}
+
+/*
+ * Set the speed when travelling from minimum position to maximum positions and
+ * from the maximum to minimum position.
+ */
+void SlowMotionServo::setSpeed(const float speed)
+{
+	if (isSettable()) {
+		mTimeFactorUp = mTimeFactorDown = speed / 10000.0;
+	}
 }
 
 /*
@@ -169,8 +219,10 @@ void SlowMotionServo::setMax(unsigned int maxPulse)
  */
 void SlowMotionServo::setInitialPosition(float position)
 {
-  position = constrainPosition(position);
-  mTargetRelativeTime = mInitialRelativeTime = mCurrentRelativeTime = position;
+	if (isSettable()) {
+	  position = constrainPosition(position);
+	  mTargetRelativeTime = mInitialRelativeTime = mCurrentRelativeTime = position;
+	}
 }
 
 /*
@@ -246,12 +298,72 @@ void SlowMotionServo::updatePosition()
 }
 
 /*
- * Returns true is the servo is stopped
+ * Returns true if the servo is isStopped
  */
 bool SlowMotionServo::isStopped()
 {
-  return mState == SERVO_STOPPED;
+	return (mState == SERVO_STOPPED);
 }
+
+/*
+ * Returns true if attributes can be set. That means the servo is in the
+ * SERVO_INIT state or in the SERVO_STOPPED state or in the SERVO_SETUP STATED
+ */
+bool SlowMotionServo::isSettable()
+{
+	return (mState <= SERVO_SETUP);
+}
+
+/*
+ * setup the minimum position in Live
+ */
+void SlowMotionServo::setupMin(uint16_t minPulse)
+{
+	if (isSettable()) {
+		if (mState != SERVO_SETUP) {
+			mSavedState = mState;
+			if (! attached()) attach(mPin);
+		}
+		mState = SERVO_SETUP;
+		minPulse = constrainPulse(minPulse);
+		if (minPulse > mMaxPulse) minPulse = mMaxPulse;
+		mMinPulse = minPulse;
+		writeMicroseconds(minPulse);
+	}
+}
+
+/*
+ * setup the maximum position in Live
+ */
+void SlowMotionServo::setupMax(uint16_t maxPulse)
+{
+	if (isSettable()) {
+		if (mState != SERVO_SETUP) {
+			mSavedState = mState;
+			if (! attached()) attach(mPin);
+		}
+		mState = SERVO_SETUP;
+		maxPulse = constrainPulse(maxPulse);
+		if (maxPulse < mMinPulse) maxPulse = mMinPulse;
+		mMaxPulse = maxPulse;
+		writeMicroseconds(maxPulse);
+	}
+}
+
+void SlowMotionServo::endSetup()
+{
+	if (mState == SERVO_SETUP) {
+		mState = mSavedState;
+		if (isStopped()) {
+			if ((mCurrentRelativeTime == 0.0 && mDetachAtMin) ||
+			    (mCurrentRelativeTime == 1.0 && mDetachAtMax))
+			{
+				detach();
+			}
+		}
+	}
+}
+
 
 /*
  * Class method to update all the servos

@@ -1,6 +1,7 @@
 +---------------------------------------------------------------------------+
 | SlowMotionServo changelog                                                 |
 +---------------------------------------------------------------------------+
+1.0.7   Added methods to support live min max settings
 1.0.6   Release to fix the problem of the duplicated 1.0.5. Nothing new
 1.0.5   Minor fix in one of the accessor name
 1.0.4   Added accessors to get almost all attributes of a SMS object

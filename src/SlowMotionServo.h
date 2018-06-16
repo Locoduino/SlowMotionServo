@@ -25,10 +25,11 @@
 class SlowMotionServo : public Servo
 {
 private:
-  byte mPin;                  // connection pin
-  byte mState:3;              // state of the servo
+  byte mPin:6;                // connection pin 0..63
   bool mDetachAtMin:1;
   bool mDetachAtMax:1;
+  byte mState:3;              // state of the servo
+  byte mSavedState:3;         // saved state of the servo for setup
   bool mReverted:1;
   unsigned int mMinPulse;     // minimum position of the servo in microseconds
   unsigned int mMaxPulse;     // maximum position of the servo in microseconds
@@ -46,6 +47,7 @@ private:
   void updatePosition();      // update the position of the servo
   void updatePulseAccordingToMinMax();
   unsigned int normalizePos(const unsigned int inPos);
+  bool isSettable();
 
 public:
   SlowMotionServo();
@@ -54,10 +56,12 @@ public:
   void setMinMax(unsigned int minPulse, unsigned int maxPulse);
   void setMin(unsigned int minPulse);
   void setMax(unsigned int maxPulse);
-  void setReverted(const bool inReverted) { mReverted = inReverted; }
-  void setMinToMaxSpeed(const float speed) { mTimeFactorUp = speed / 10000.0; }
-  void setMaxToMinSpeed(const float speed) { mTimeFactorDown = speed / 10000.0; }
-  void setSpeed(const float speed) { mTimeFactorUp = mTimeFactorDown = speed / 10000.0; }
+  unsigned int minPosition() { return mMinPulse; }
+  unsigned int maxPosition() { return mMaxPulse; }
+  void setReverted(const bool inReverted);
+  void setMinToMaxSpeed(const float speed);
+  void setMaxToMinSpeed(const float speed);
+  void setSpeed(const float speed);
   void setInitialPosition(float position);
   void setDetachAtMin(bool detach) { mDetachAtMin = detach; }
   void setDetachAtMax(bool detach) { mDetachAtMax = detach; }
@@ -66,6 +70,15 @@ public:
   void goToMin() { goTo(0.0); }
   void goToMax() { goTo(1.0); }
   bool isStopped();
+
+  /*
+   * Live configuration functions.
+   */
+  void setupMin(uint16_t minPulse);
+  void setupMax(uint16_t maxPulse);
+  void adjustMin(int16_t increment) { setupMin(mMinPulse + increment); }
+  void adjustMax(int16_t increment) { setupMax(mMaxPulse + increment); }
+  void endSetup();
 
   byte pin()                  { return mPin; }
   bool detachAtMin()          { return mDetachAtMin; }
