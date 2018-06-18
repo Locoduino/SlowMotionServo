@@ -216,9 +216,9 @@ Entering in live adjustement process is done implicitely by calling one of the f
 
 ```adjustMax()``` adds ```increment``` to the maximum position. ```increment``` is a signed 16 bits integer. The servo enters in the live adjustement process: its state is saved, ```increment``` is added to the maximum pulse and it goes to the new maximum position so that the user can see it. If after adding ```increment```, the maximum pulse is lower than the minimum pulse, it is set back to the minimum pulse.  If after adding ```increment```, the maximum pulse is greater than the maximum possible value of the Servo library (2400), it is set back to the maximum possible value.
 
-### endAdjust()
+### endSetup()
 
-After calling the 4 previous function, ```endAdjust()``` shall be called to exit the adjustement process. The state of the servo is restored. However it does not returns to the position it was before the adjustement process.
+After calling the 4 previous function, ```endSetup()``` shall be called to exit the adjustement process. The state of the servo is restored. However it does not returns to the position it was before the adjustement process.
 
 ## Example
 
