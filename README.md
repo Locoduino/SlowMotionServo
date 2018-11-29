@@ -1,6 +1,4 @@
-[![Build Status](https://travis-ci.org/Locoduino/SlowMotionServo.svg?branch=master)](https://travis-ci.org/Locoduino/SlowMotionServo)
-
-# SlowMotionServo
+# SlowMotionServo [![Build Status](https://travis-ci.org/Locoduino/SlowMotionServo.svg?branch=master)](https://travis-ci.org/Locoduino/SlowMotionServo)
 
 A Slow Motion Servo Library for Arduino
 
