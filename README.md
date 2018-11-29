@@ -1,6 +1,24 @@
+[![Build Status](https://travis-ci.org/Locoduino/SlowMotionServo.svg?branch=master)](https://travis-ci.org/Locoduino/SlowMotionServo)
+
 # SlowMotionServo
 
 A Slow Motion Servo Library for Arduino
+
+## Changelog
+
+- 1.1.2   Fix a mistake in the documentation.
+- 1.1.1   Live settings example
+- 1.1     Added methods to support live min max settings
+- 1.0.6   Release to fix the problem of the duplicated 1.0.5. Nothing new
+- 1.0.5   Minor fix in one of the accessor name
+- 1.0.4   Added accessors to get almost all attributes of a SMS object
+- 1.0.3   Added a method to do a mirror at time = .5
+- 1.0.2   Default min and max have been changed to 1000 and 2000. More accurate SMSSmoothBounce trajectory. Fixed a problem with the initial position. Added PushButton example.
+- 1.0.1   Fix a typo in the library.properties
+- 1.0     Initial release.
+
+
+## Description
 
 SlowMotionServo provides a way to drive one or many servos slowly. Instead of
 setting the position, each servo has 2 trajectories, ie 2 functions angle(t)
