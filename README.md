@@ -214,7 +214,7 @@ in loop() as frequently as possible.
 
 With version 1.1, 5 functions have been added to implement live adjustement of minimum and maximum positions. When an adjustement of a servo is in progress, the goTo, goToMin and goToMax functions fail silently.
 
-Entering in live adjustement process is done implicitely by calling one of the for adjust functions. Exiting the live adjustement process is done by calling de ```endAdjust()``` function.
+Entering in live adjustement process is done implicitely by calling one of the for adjust functions. Exiting the live adjustement process is done by calling de ```endSetup()``` function.
 
 ### setupMin(minPulse)
 
