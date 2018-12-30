@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/Locoduino/SlowMotionServo.svg?branch=master)](https://travis-ci.org/Locoduino/SlowMotionServo)
+[![GitHub release](https://img.shields.io/github/release/Locoduino/SlowMotionServo.svg)](https://github.com/Locoduino/RingBuffer/releases/latest) [![Build Status](https://travis-ci.org/Locoduino/SlowMotionServo.svg?branch=master)](https://travis-ci.org/Locoduino/SlowMotionServo)
 
 # SlowMotionServo
 
