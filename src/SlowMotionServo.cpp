@@ -21,15 +21,40 @@
 static const byte NOPIN = 63;
 
 enum {
-	SERVO_INIT         = 0,
-	SERVO_STOPPED      = 1,
-	SERVO_SETUP        = 2,
-	SERVO_UP           = 3,
-	SERVO_DOWN         = 4,
-	SERVO_DELAYED_UP   = 5,
-	SERVO_DELAYED_DOWN = 6,
-	SERVO_NO_STATE     = 7
+  SERVO_INIT         = 0,
+  SERVO_STOPPED      = 1,
+  SERVO_SETUP        = 2,
+  SERVO_UP           = 3,
+  SERVO_DOWN         = 4,
+  SERVO_DELAYED_UP   = 5,
+  SERVO_DELAYED_DOWN = 6,
+  SERVO_NO_STATE     = 7
 };
+
+#if WITH_DEBUG == 1
+
+static void printState(const byte inState)
+{
+  switch (inState) {
+    case SERVO_INIT:          Serial.print(F("INIT"));         break;
+    case SERVO_STOPPED:       Serial.print(F("STOPPED"));      break;
+    case SERVO_SETUP:         Serial.print(F("SETUP"));        break;
+    case SERVO_UP:            Serial.print(F("UP"));           break;
+    case SERVO_DOWN:          Serial.print(F("DOWN"));         break;
+    case SERVO_DELAYED_UP:    Serial.print(F("DELAYED_UP"));   break;
+    case SERVO_DELAYED_DOWN:	Serial.print(F("DELAYED_DOWN")); break;
+    default:                  Serial.print(F("*UNKNOWN*"));    break;
+  }
+}
+
+static void printlnState(const byte inState)
+{
+  printState(inState);
+  Serial.println();
+}
+
+
+#endif
 
 /*
  * Static member to store a list of servos. This allow to update the
@@ -56,10 +81,10 @@ unsigned int SlowMotionServo::sDelayUntilStop = 10;
  */
 SlowMotionServo::SlowMotionServo() :
   mPin(NOPIN),
-	mDetachAtMin(false),
+  mDetachAtMin(false),
   mDetachAtMax(false),
-	mState(SERVO_INIT),
-	mSavedState(SERVO_NO_STATE),
+  mState(SERVO_INIT),
+  mSavedState(SERVO_NO_STATE),
   mReverted(false),
   mMinPulse(1000),
   mMaxPulse(2000),
@@ -69,6 +94,7 @@ SlowMotionServo::SlowMotionServo() :
   mTimeFactorUp(0.0001),
   mTimeFactorDown(0.0001)
 {
+  /* Add the object at the beginning of the list */
   mNext = sServoList;
   sServoList = this;
 }
@@ -80,6 +106,34 @@ SlowMotionServo::SlowMotionServo(byte pin) :
   SlowMotionServo()
 {
   mPin = pin;
+}
+
+/*
+ * Destructor
+ * Remove the object from the list
+ */
+SlowMotionServo::~SlowMotionServo()
+{
+  SlowMotionServo *currentObject = sServoList;
+  SlowMotionServo *previousObject = NULL;
+  while (currentObject != NULL && currentObject != this) {
+  previousObject = currentObject;
+  currentObject = currentObject->mNext;
+  }
+  if (currentObject != NULL) {
+  /*
+   * Found. normal behavior. If not found there is a problem
+   * in the datastructures
+   */
+  if (previousObject == NULL) {
+  /* Found at head, remove it */
+  sServoList = sServoList->mNext;
+  }
+  else {
+  /* Found elsewhere, link the previous to the next */
+  previousObject->mNext = currentObject->mNext;
+  }
+  }
 }
 
 /*
@@ -129,18 +183,18 @@ unsigned int SlowMotionServo::normalizePos(const unsigned int inPos)
  */
 void SlowMotionServo::setMinMax(unsigned int minPulse, unsigned int maxPulse)
 {
-	if (isSettable()) {
-		minPulse = constrainPulse(minPulse);
-		maxPulse = constrainPulse(maxPulse);
-		if (minPulse <= maxPulse) {
-		  mMinPulse = minPulse;
-		  mMaxPulse = maxPulse;
-		}
-		else {
-		  mMinPulse = mMaxPulse = (minPulse + maxPulse) / 2;
-		}
-		updatePulseAccordingToMinMax();
-	}
+  if (isSettable()) {
+    minPulse = constrainPulse(minPulse);
+    maxPulse = constrainPulse(maxPulse);
+    if (minPulse <= maxPulse) {
+      mMinPulse = minPulse;
+      mMaxPulse = maxPulse;
+    }
+    else {
+      mMinPulse = mMaxPulse = (minPulse + maxPulse) / 2;
+    }
+    updatePulseAccordingToMinMax();
+  }
 }
 
 /*
@@ -149,12 +203,12 @@ void SlowMotionServo::setMinMax(unsigned int minPulse, unsigned int maxPulse)
  */
 void SlowMotionServo::setMin(unsigned int minPulse)
 {
-	if (isSettable()) {
-	  minPulse = constrainPulse(minPulse);
-	  if (minPulse > mMaxPulse) minPulse = mMaxPulse;
-	  mMinPulse = minPulse;
-	  updatePulseAccordingToMinMax();
-	}
+  if (isSettable()) {
+    minPulse = constrainPulse(minPulse);
+    if (minPulse > mMaxPulse) minPulse = mMaxPulse;
+    mMinPulse = minPulse;
+    updatePulseAccordingToMinMax();
+  }
 }
 
 /*
@@ -163,12 +217,12 @@ void SlowMotionServo::setMin(unsigned int minPulse)
  */
 void SlowMotionServo::setMax(unsigned int maxPulse)
 {
-	if (isSettable()) {
-	  maxPulse = constrainPulse(maxPulse);
-	  if (maxPulse < mMinPulse) maxPulse = mMinPulse;
-	  mMaxPulse = maxPulse;
-	  updatePulseAccordingToMinMax();
-	}
+  if (isSettable()) {
+    maxPulse = constrainPulse(maxPulse);
+    if (maxPulse < mMinPulse) maxPulse = mMinPulse;
+    mMaxPulse = maxPulse;
+    updatePulseAccordingToMinMax();
+  }
 }
 
 /*
@@ -176,9 +230,9 @@ void SlowMotionServo::setMax(unsigned int maxPulse)
  */
 void SlowMotionServo::setReverted(const bool inReverted)
 {
-	if (isSettable()) {
-		mReverted = inReverted;
-	}
+  if (isSettable()) {
+    mReverted = inReverted;
+  }
 }
 
 /*
@@ -186,9 +240,9 @@ void SlowMotionServo::setReverted(const bool inReverted)
  */
 void SlowMotionServo::setMinToMaxSpeed(const float speed)
 {
-	if (isSettable()) {
-		mTimeFactorUp = speed / 10000.0;
-	}
+  if (isSettable()) {
+    mTimeFactorUp = speed / 10000.0;
+  }
 }
 
 /*
@@ -196,9 +250,9 @@ void SlowMotionServo::setMinToMaxSpeed(const float speed)
  */
 void SlowMotionServo::setMaxToMinSpeed(const float speed)
 {
-	if (isSettable()) {
-		mTimeFactorDown = speed / 10000.0;
-	}
+  if (isSettable()) {
+    mTimeFactorDown = speed / 10000.0;
+  }
 }
 
 /*
@@ -207,9 +261,9 @@ void SlowMotionServo::setMaxToMinSpeed(const float speed)
  */
 void SlowMotionServo::setSpeed(const float speed)
 {
-	if (isSettable()) {
-		mTimeFactorUp = mTimeFactorDown = speed / 10000.0;
-	}
+  if (isSettable()) {
+    mTimeFactorUp = mTimeFactorDown = speed / 10000.0;
+  }
 }
 
 /*
@@ -219,10 +273,10 @@ void SlowMotionServo::setSpeed(const float speed)
  */
 void SlowMotionServo::setInitialPosition(float position)
 {
-	if (isSettable()) {
-	  position = constrainPosition(position);
-	  mTargetRelativeTime = mInitialRelativeTime = mCurrentRelativeTime = position;
-	}
+  if (isSettable()) {
+    position = constrainPosition(position);
+    mTargetRelativeTime = mInitialRelativeTime = mCurrentRelativeTime = position;
+  }
 }
 
 /*
@@ -256,7 +310,7 @@ void SlowMotionServo::updatePosition()
 
   switch (mState) {
     case SERVO_INIT:
-    	position = slopeUp(mCurrentRelativeTime);
+      position = slopeUp(mCurrentRelativeTime);
       writeMicroseconds(normalizePos(position * (mMaxPulse - mMinPulse) + mMinPulse));
       mState = SERVO_STOPPED;
       break;
@@ -302,7 +356,7 @@ void SlowMotionServo::updatePosition()
  */
 bool SlowMotionServo::isStopped()
 {
-	return (mState == SERVO_STOPPED);
+  return (mState == SERVO_STOPPED);
 }
 
 /*
@@ -311,7 +365,7 @@ bool SlowMotionServo::isStopped()
  */
 bool SlowMotionServo::isSettable()
 {
-	return (mState <= SERVO_SETUP);
+  return (mState <= SERVO_SETUP);
 }
 
 /*
@@ -319,17 +373,17 @@ bool SlowMotionServo::isSettable()
  */
 void SlowMotionServo::setupMin(uint16_t minPulse)
 {
-	if (isSettable()) {
-		if (mState != SERVO_SETUP) {
-			mSavedState = mState;
-			if (! attached()) attach(mPin);
-		}
-		mState = SERVO_SETUP;
-		minPulse = constrainPulse(minPulse);
-		if (minPulse > mMaxPulse) minPulse = mMaxPulse;
-		mMinPulse = minPulse;
-		writeMicroseconds(minPulse);
-	}
+  if (isSettable()) {
+    if (mState != SERVO_SETUP) {
+      mSavedState = mState;
+      if (! attached()) attach(mPin);
+    }
+    mState = SERVO_SETUP;
+    minPulse = constrainPulse(minPulse);
+    if (minPulse > mMaxPulse) minPulse = mMaxPulse;
+    mMinPulse = minPulse;
+    writeMicroseconds(minPulse);
+  }
 }
 
 /*
@@ -337,31 +391,31 @@ void SlowMotionServo::setupMin(uint16_t minPulse)
  */
 void SlowMotionServo::setupMax(uint16_t maxPulse)
 {
-	if (isSettable()) {
-		if (mState != SERVO_SETUP) {
-			mSavedState = mState;
-			if (! attached()) attach(mPin);
-		}
-		mState = SERVO_SETUP;
-		maxPulse = constrainPulse(maxPulse);
-		if (maxPulse < mMinPulse) maxPulse = mMinPulse;
-		mMaxPulse = maxPulse;
-		writeMicroseconds(maxPulse);
-	}
+  if (isSettable()) {
+    if (mState != SERVO_SETUP) {
+      mSavedState = mState;
+      if (! attached()) attach(mPin);
+    }
+    mState = SERVO_SETUP;
+    maxPulse = constrainPulse(maxPulse);
+    if (maxPulse < mMinPulse) maxPulse = mMinPulse;
+    mMaxPulse = maxPulse;
+    writeMicroseconds(maxPulse);
+  }
 }
 
 void SlowMotionServo::endSetup()
 {
-	if (mState == SERVO_SETUP) {
-		mState = mSavedState;
-		if (isStopped()) {
-			if ((mCurrentRelativeTime == 0.0 && mDetachAtMin) ||
-			    (mCurrentRelativeTime == 1.0 && mDetachAtMax))
-			{
-				detach();
-			}
-		}
-	}
+  if (mState == SERVO_SETUP) {
+    mState = mSavedState;
+    if (isStopped()) {
+      if ((mCurrentRelativeTime == 0.0 && mDetachAtMin) ||
+          (mCurrentRelativeTime == 1.0 && mDetachAtMax))
+      {
+        detach();
+      }
+    }
+  }
 }
 
 
@@ -379,12 +433,12 @@ void SlowMotionServo::update()
 
 float SlowMotionServo::minToMaxSpeed()
 {
-	return 10000.0 * mTimeFactorUp;
+  return 10000.0 * mTimeFactorUp;
 }
 
 float SlowMotionServo::maxToMinSpeed()
 {
-	return 10000.0 * mTimeFactorDown;
+  return 10000.0 * mTimeFactorDown;
 }
 
 /*
@@ -395,6 +449,50 @@ void SlowMotionServo::setDelayUntilStop(unsigned int delayUntilStop)
 {
   sDelayUntilStop = delayUntilStop;
 }
+
+/*
+ * Debugging purpose.
+ */
+#if WITH_DEBUG == 1
+
+void SlowMotionServo::printList()
+{
+  SlowMotionServo *currentObject = sServoList;
+  Serial.print(F("[ "));
+  while (currentObject != NULL) {
+    Serial.print((unsigned long)currentObject, HEX);
+    currentObject = currentObject->mNext;
+    if (currentObject != NULL) {
+      Serial.print(F(" > "));
+    }
+  }
+  Serial.println(F(" ]"));
+}
+
+void SlowMotionServo::print()
+{
+  Serial.print('<');
+  Serial.print((unsigned long)this, HEX);
+  Serial.println(F("> {"));
+  Serial.print(F("\tpin: "));
+  if (mPin == 63) Serial.println(F("NONE"));
+  else Serial.println(mPin);
+  Serial.print(F("\tdetach at min: ")); Serial.println(mDetachAtMin ? F("true") : F("false"));
+  Serial.print(F("\tdetach at max: ")); Serial.println(mDetachAtMax ? F("true") : F("false"));
+  Serial.print(F("\tstate: ")); printlnState(mState);
+  Serial.print(F("\treverted: ")); Serial.println(mReverted ? F("true") : F("false"));
+  Serial.print(F("\tmin pulse: ")); Serial.println(mMinPulse);
+  Serial.print(F("\tmax pulse: ")); Serial.println(mMaxPulse);
+  Serial.print(F("\tstart time: ")); Serial.println(mStartTime);
+  Serial.print(F("\tinitial relative time: ")); Serial.println(mInitialRelativeTime);
+  Serial.print(F("\ttarget relative time: ")); Serial.println(mTargetRelativeTime);
+  Serial.print(F("\tcurrent relative time: ")); Serial.println(mCurrentRelativeTime);
+  Serial.print(F("\ttime factor up: ")); Serial.println(mTimeFactorUp);
+  Serial.print(F("\ttime factor down: ")); Serial.println(mTimeFactorDown);
+  Serial.println('}');
+}
+
+#endif
 
 float SMSLinear::slopeUp(float time)
 {

@@ -1,9 +1,12 @@
-# SlowMotionServo [![Build Status](https://travis-ci.org/Locoduino/SlowMotionServo.svg?branch=master)](https://travis-ci.org/Locoduino/SlowMotionServo)
+[![Build Status](https://travis-ci.org/Locoduino/SlowMotionServo.svg?branch=master)](https://travis-ci.org/Locoduino/SlowMotionServo)
+
+# SlowMotionServo
 
 A Slow Motion Servo Library for Arduino
 
 ## Changelog
 
+- 1.2     Destructor to remove the SMS object from the list. Allows dynamic configuration in general purpose board.
 - 1.1.2   Fix a mistake in the documentation.
 - 1.1.1   Live settings example
 - 1.1     Added methods to support live min max settings

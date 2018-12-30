@@ -22,6 +22,8 @@
 #include "Arduino.h"
 #include <Servo.h>
 
+#define WITH_DEBUG 0
+
 class SlowMotionServo : public Servo
 {
 private:
@@ -52,6 +54,7 @@ private:
 public:
   SlowMotionServo();
   SlowMotionServo(byte pin);
+  virtual ~SlowMotionServo();
   void setPin(const byte pin) { mPin = pin; }
   void setMinMax(unsigned int minPulse, unsigned int maxPulse);
   void setMin(unsigned int minPulse);
@@ -94,6 +97,11 @@ public:
 
   static void update();
   static void setDelayUntilStop(unsigned int delayUntilStop);
+
+#if WITH_DEBUG == 1
+  static void printList();
+  void print();
+#endif
 };
 
 class SMSLinear : public SlowMotionServo
