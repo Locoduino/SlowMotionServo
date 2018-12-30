@@ -22,7 +22,7 @@
 #include "Arduino.h"
 #include <Servo.h>
 
-#define WITH_DEBUG 0
+#define WITH_DEBUG 1
 
 class SlowMotionServo : public Servo
 {
@@ -49,7 +49,7 @@ private:
   void updatePosition();      // update the position of the servo
   void updatePulseAccordingToMinMax();
   unsigned int normalizePos(const unsigned int inPos);
-  bool isSettable();
+  bool isSettable() const;
 
 public:
   SlowMotionServo();
@@ -59,8 +59,8 @@ public:
   void setMinMax(unsigned int minPulse, unsigned int maxPulse);
   void setMin(unsigned int minPulse);
   void setMax(unsigned int maxPulse);
-  unsigned int minPosition() { return mMinPulse; }
-  unsigned int maxPosition() { return mMaxPulse; }
+  unsigned int minPosition() const { return mMinPulse; }
+  unsigned int maxPosition() const { return mMaxPulse; }
   void setReverted(const bool inReverted);
   void setMinToMaxSpeed(const float speed);
   void setMaxToMinSpeed(const float speed);
@@ -72,7 +72,7 @@ public:
   void goTo(float position);
   void goToMin() { goTo(0.0); }
   void goToMax() { goTo(1.0); }
-  bool isStopped();
+  bool isStopped() const;
 
   /*
    * Live configuration functions.
@@ -83,14 +83,14 @@ public:
   void adjustMax(int16_t increment) { setupMax(mMaxPulse + increment); }
   void endSetup();
 
-  byte pin()                  { return mPin; }
-  bool detachAtMin()          { return mDetachAtMin; }
-  bool detachAtMax()          { return mDetachAtMax; }
-  unsigned int minimumPulse() { return mMinPulse; }
-  unsigned int maximumPulse() { return mMaxPulse; }
-  float minToMaxSpeed();
-  float maxToMinSpeed();
-  bool isReverted()           { return mReverted; }
+  byte pin() const                  { return mPin; }
+  bool detachAtMin() const          { return mDetachAtMin; }
+  bool detachAtMax() const          { return mDetachAtMax; }
+  unsigned int minimumPulse() const { return mMinPulse; }
+  unsigned int maximumPulse() const { return mMaxPulse; }
+  float minToMaxSpeed() const;
+  float maxToMinSpeed() const;
+  bool isReverted() const           { return mReverted; }
 
   virtual float slopeUp(float time) = 0;
   virtual float slopeDown(float time) = 0;
@@ -100,7 +100,7 @@ public:
 
 #if WITH_DEBUG == 1
   static void printList();
-  void print();
+  void print() const;
 #endif
 };
 

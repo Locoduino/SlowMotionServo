@@ -354,7 +354,7 @@ void SlowMotionServo::updatePosition()
 /*
  * Returns true if the servo is isStopped
  */
-bool SlowMotionServo::isStopped()
+bool SlowMotionServo::isStopped() const
 {
   return (mState == SERVO_STOPPED);
 }
@@ -363,7 +363,7 @@ bool SlowMotionServo::isStopped()
  * Returns true if attributes can be set. That means the servo is in the
  * SERVO_INIT state or in the SERVO_STOPPED state or in the SERVO_SETUP STATED
  */
-bool SlowMotionServo::isSettable()
+bool SlowMotionServo::isSettable() const
 {
   return (mState <= SERVO_SETUP);
 }
@@ -431,12 +431,12 @@ void SlowMotionServo::update()
   }
 }
 
-float SlowMotionServo::minToMaxSpeed()
+float SlowMotionServo::minToMaxSpeed() const
 {
   return 10000.0 * mTimeFactorUp;
 }
 
-float SlowMotionServo::maxToMinSpeed()
+float SlowMotionServo::maxToMinSpeed() const
 {
   return 10000.0 * mTimeFactorDown;
 }
@@ -469,7 +469,7 @@ void SlowMotionServo::printList()
   Serial.println(F(" ]"));
 }
 
-void SlowMotionServo::print()
+void SlowMotionServo::print() const
 {
   Serial.print('<');
   Serial.print((unsigned long)this, HEX);
