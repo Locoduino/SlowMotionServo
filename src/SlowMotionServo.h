@@ -22,7 +22,7 @@
 #include "Arduino.h"
 #include <Servo.h>
 
-#define WITH_DEBUG 1
+#define WITH_DEBUG 0
 
 class SlowMotionServo : public Servo
 {
