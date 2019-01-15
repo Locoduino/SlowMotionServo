@@ -351,4 +351,3 @@ The SlowMotionServo Library examples are built on Travis CI for the following bo
 - Arduino Mega 2560
 - Arduino Zero
 - Arduino Due
-- ESP8266
