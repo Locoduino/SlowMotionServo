@@ -20,33 +20,37 @@
 #define __SlowMotionServo_h__
 
 #include "Arduino.h"
+
+#ifdef ARDUINO_ARCH_ESP32
+#include <ESP32Servo.h>
+#else
 #include <Servo.h>
+#endif
 
 #define WITH_DEBUG 0
 
-class SlowMotionServo : public Servo
-{
+class SlowMotionServo : public Servo {
 private:
-  byte mPin:6;                // connection pin 0..63
-  bool mDetachAtMin:1;
-  bool mDetachAtMax:1;
-  byte mState:3;              // state of the servo
-  byte mSavedState:3;         // saved state of the servo for setup
-  bool mReverted:1;
+  byte mPin : 7; // connection pin 0..126. 127 dedicated to NOPIN
+  bool mDetachAtMin : 1;
+  bool mDetachAtMax : 1;
+  byte mState : 3;      // state of the servo
+  byte mSavedState : 3; // saved state of the servo for setup
+  bool mReverted : 1;
   unsigned int mMinPulse;     // minimum position of the servo in microseconds
   unsigned int mMaxPulse;     // maximum position of the servo in microseconds
   unsigned long mStartTime;   // time when the movement begin
   float mInitialRelativeTime; // starting position-time of the servo
   float mTargetRelativeTime;  // target position-time of the servo
   float mCurrentRelativeTime; // current position-time of the servo
-  float mTimeFactorUp;        // time factor of a millis for movement from min to max
-  float mTimeFactorDown;      // time factor of a millis for movement from max to min
-  SlowMotionServo *mNext;     // next servo in the list
+  float mTimeFactorUp;   // time factor of a millis for movement from min to max
+  float mTimeFactorDown; // time factor of a millis for movement from max to min
+  SlowMotionServo *mNext; // next servo in the list
 
   static SlowMotionServo *sServoList; // head of the servo list
   static unsigned int sDelayUntilStop;
 
-  void updatePosition();      // update the position of the servo
+  void updatePosition(); // update the position of the servo
   void updatePulseAccordingToMinMax();
   unsigned int normalizePos(const unsigned int inPos);
   bool isSettable() const;
@@ -83,14 +87,14 @@ public:
   void adjustMax(int16_t increment) { setupMax(mMaxPulse + increment); }
   void endSetup();
 
-  byte pin() const                  { return mPin; }
-  bool detachAtMin() const          { return mDetachAtMin; }
-  bool detachAtMax() const          { return mDetachAtMax; }
+  byte pin() const { return mPin; }
+  bool detachAtMin() const { return mDetachAtMin; }
+  bool detachAtMax() const { return mDetachAtMax; }
   unsigned int minimumPulse() const { return mMinPulse; }
   unsigned int maximumPulse() const { return mMaxPulse; }
   float minToMaxSpeed() const;
   float maxToMinSpeed() const;
-  bool isReverted() const           { return mReverted; }
+  bool isReverted() const { return mReverted; }
 
   virtual float slopeUp(float time) = 0;
   virtual float slopeDown(float time) = 0;
@@ -104,24 +108,21 @@ public:
 #endif
 };
 
-class SMSLinear : public SlowMotionServo
-{
+class SMSLinear : public SlowMotionServo {
 public:
   virtual float slopeUp(float time);
   virtual float slopeDown(float time);
   float slope(float time) { return time; }
 };
 
-class SMSSmooth : public SlowMotionServo
-{
+class SMSSmooth : public SlowMotionServo {
 public:
   virtual float slopeUp(float time);
   virtual float slopeDown(float time);
-  float slope(float time) { return (1.0 - cos(time * PI))/2.0; }
+  float slope(float time) { return (1.0 - cos(time * PI)) / 2.0; }
 };
 
-class SMSSmoothBounce : public SlowMotionServo
-{
+class SMSSmoothBounce : public SlowMotionServo {
 public:
   virtual float slopeUp(float time);
   virtual float slopeDown(float time);

@@ -1,11 +1,11 @@
 /*
  * Drive a servo by using a push button
- * Uses the Bounce2 library. This library can be installed using the library manager
+ * Uses the Bounce2 library. This library can be installed using the library
+ * manager
  */
- 
-#include <Servo.h>
-#include <SlowMotionServo.h>
+
 #include <Bounce2.h>
+#include <SlowMotionServo.h>
 
 SMSSmoothBounce myServo;
 Bounce myButton;
@@ -14,8 +14,7 @@ const byte servoPin = 3;
 const byte buttonPin = 4;
 const byte ledPin = 13;
 
-void setup()
-{
+void setup() {
   pinMode(ledPin, OUTPUT);
   /* when the button is pressed, the input is LOW */
   pinMode(buttonPin, INPUT_PULLUP);
@@ -33,15 +32,14 @@ void setup()
   digitalWrite(ledPin, HIGH);
 }
 
-void loop()
-{
+void loop() {
   static float servoTarget = 0.0;
 
   /* update the state of the button */
   myButton.update();
   /* update the position of the servo */
   SlowMotionServo::update();
-  
+
   if (myServo.isStopped()) {
     digitalWrite(ledPin, LOW);
     if (myButton.fell()) {
@@ -54,4 +52,3 @@ void loop()
     }
   }
 }
-
