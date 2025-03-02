@@ -46,6 +46,7 @@ setupMax	KEYWORD2
 adjustMin	KEYWORD2
 adjustMax	KEYWORD2
 endSetup	KEYWORD2
+position	KEYWORD2
 
 ################################################
 # Constants (LITERAL1)
