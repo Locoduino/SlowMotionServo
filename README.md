@@ -6,6 +6,7 @@ A Slow Motion Servo Library for Arduino
 
 ## Changelog
 
+- 1.3     ```position()``` function to read the current position of a servo.
 - 1.2     Destructor to remove the SMS object from the list. Allows dynamic configuration in general purpose board.
 - 1.1.2   Fix a mistake in the documentation.
 - 1.1.1   Live settings example
@@ -197,6 +198,10 @@ Returns a float which is the speed of the servo when traveling from maximum to m
 ### isReverted()
 
 Returns true if the movement is reverted.
+
+### position()
+
+Returns the current position in float, from 0.0 to 1.0.
 
 ### SlowMotionServo::setDelayUntilStop(delay)
 
