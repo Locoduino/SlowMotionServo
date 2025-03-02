@@ -298,14 +298,13 @@ void SlowMotionServo::goTo(float position) {
  * Update the position of the servo.
  */
 void SlowMotionServo::updatePosition() {
-  float position;
   unsigned long date = millis();
 
   switch (mState) {
   case SERVO_INIT:
-    position = slopeUp(mCurrentRelativeTime);
+    mPosition = slopeUp(mCurrentRelativeTime);
     writeMicroseconds(
-        normalizePos(position * (mMaxPulse - mMinPulse) + mMinPulse));
+        normalizePos(mPosition * (mMaxPulse - mMinPulse) + mMinPulse));
     mState = SERVO_STOPPED;
     break;
   case SERVO_UP:
@@ -315,9 +314,9 @@ void SlowMotionServo::updatePosition() {
       mCurrentRelativeTime = mTargetRelativeTime;
       mState = SERVO_DELAYED_UP;
     }
-    position = slopeUp(mCurrentRelativeTime);
+    mPosition = slopeUp(mCurrentRelativeTime);
     writeMicroseconds(
-        normalizePos(position * (mMaxPulse - mMinPulse) + mMinPulse));
+        normalizePos(mPosition * (mMaxPulse - mMinPulse) + mMinPulse));
     break;
   case SERVO_DOWN:
     mCurrentRelativeTime =
@@ -326,9 +325,9 @@ void SlowMotionServo::updatePosition() {
       mCurrentRelativeTime = mTargetRelativeTime;
       mState = SERVO_DELAYED_DOWN;
     }
-    position = slopeDown(mCurrentRelativeTime);
+    mPosition = slopeDown(mCurrentRelativeTime);
     writeMicroseconds(
-        normalizePos(position * (mMaxPulse - mMinPulse) + mMinPulse));
+        normalizePos(mPosition * (mMaxPulse - mMinPulse) + mMinPulse));
     break;
   case SERVO_DELAYED_UP:
     if ((date - mStartTime) > sDelayUntilStop) {

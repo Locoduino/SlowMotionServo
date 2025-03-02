@@ -1,5 +1,6 @@
 /*
  * Drive a servo by using a push button
+ * In addition current position (from 0.0 to 1.0) is displayed on Serial.
  * Uses the Bounce2 library. This library can be installed using the library
  * manager
  */
@@ -18,6 +19,9 @@ void setup() {
   pinMode(ledPin, OUTPUT);
   /* when the button is pressed, the input is LOW */
   pinMode(buttonPin, INPUT_PULLUP);
+
+  Serial.begin(115200);
+  while (!Serial);
 
   myButton.attach(buttonPin);
   /* scan interval for debounce */
@@ -39,6 +43,9 @@ void loop() {
   myButton.update();
   /* update the position of the servo */
   SlowMotionServo::update();
+
+  /* Display the current position */
+  Serial.println(myServo.position());
 
   if (myServo.isStopped()) {
     digitalWrite(ledPin, LOW);

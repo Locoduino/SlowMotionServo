@@ -45,6 +45,7 @@ private:
   float mCurrentRelativeTime; // current position-time of the servo
   float mTimeFactorUp;   // time factor of a millis for movement from min to max
   float mTimeFactorDown; // time factor of a millis for movement from max to min
+  float mPosition;       // current position of the servo, from 0.0 to 1.0
   SlowMotionServo *mNext; // next servo in the list
 
   static SlowMotionServo *sServoList; // head of the servo list
@@ -76,6 +77,7 @@ public:
   void goTo(float position);
   void goToMin() { goTo(0.0); }
   void goToMax() { goTo(1.0); }
+  float position() { return mPosition; }
   bool isStopped() const;
 
   /*
